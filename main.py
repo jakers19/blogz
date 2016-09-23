@@ -21,15 +21,16 @@ class BlogHandler(webapp2.RequestHandler):
         """
 
         # TODO - filter the query so that only posts by the given user
-        return None
-
+        query = Post.all().filter('author =', user).order('-created')
+        return query.fetch(limit=limit, offset=offset)
+    
     def get_user_by_name(self, username):
         """ Get a user object from the db, based on their username """
         user = db.GqlQuery("SELECT * FROM User WHERE username = '%s'" % username)
         if user:
             return user.get()
 
-    def login_user(self, user):
+    def login_user(self, user): 
         """ Login a user specified by a User object user """
         user_id = user.key().id()
         self.set_secure_cookie('user_id', str(user_id))
